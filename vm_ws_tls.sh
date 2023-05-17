@@ -37,11 +37,11 @@ else
 fi
 
 yellow "开始配置nat内部端口..."
-read -p "请选择是否使用cloudflare cdn？1.是；2.否；other.退出（默认使用cloudflare） " iscf
+read -p "请选择是否使用cloudflare cdn? 1.是；2.否；other.退出(默认使用cloudflare)：" iscf
 [[ -z $iscf ]] && iscf=1
-if [[ $iscf == 1]]; then
-    read -p "请输入cf支持的https端口号（443, 2053, 2083, 2087, 2096, 8443. 默认为443）：" in_port
-elif [[ $iscf == 2]]; then
+if [[ $iscf == 1 ]]; then
+    read -p "请输入cf支持的https端口号(443, 2053, 2083, 2087, 2096, 8443. 默认为443)：" in_port
+elif [[ $iscf == 2 ]]; then
     read -p "请输入内部端口号（默认为443）：" in_port
 else
     exit 1
@@ -77,10 +77,10 @@ green "nat内部端口配置完成！"
 yellow "开始进行端口映射..."
 read -p "服务商已提供映射或可通过操作面板完成映射？1.是；2.否; other.退出(默认为2)：" map
 [[ -z $map ]] && map=2
-if [[ $map == 1]]; then
+if [[ $map == 1 ]]; then
     echo "如服务商已提供映射，可直接进行下一步！"
     echo "如果可通过操作面板完成映射，请稍后移步操作面板完成前面设定的nat内部端口 $in_port 和可用的外部端口的映射！"
-elif [[ $map == 2]]; then
+elif [[ $map == 2 ]]; then
     read -p "请输入nat的外部访问端口：" out_port
     sign=false
     [[ -z $out_port ]] && out_port=443
@@ -124,40 +124,57 @@ green "已完成端口映射！"
 
 yellow "开始配置证书..."
 
-read -p "请输入已解析完成的域名：" domain
-until [[ -z $domain ]]; do
+while true; do
     read -p "请输入已解析完成的域名：" domain
+    if [ ! -z "$domain" ]; then
+        break
+    fi
 done
 
-read -p "请选择：1.已上传证书文件，输入证书路径；2.未上传证书，直接输入证书内容.(默认选择1)" is_path
+read -p "请选择：1.已上传证书文件，输入证书路径；2.未上传证书，直接输入证书内容.(默认选择1)： " is_path
 [[ -z $is_path ]] && is_path=1
 if [[ $is_path == 1 ]]; then
     read -p "请输入.crt结尾的证书绝对路径：" cert
-    until [[! -f $cert ]]; then
+    until [[! -f $cert ]]; do
         red "找不到文件！请检查输入路径！"
         read -p "请输入.crt结尾的证书绝对路径：" cert
     done
     read -p "请输入.key结尾的证书绝对路径：" key
-    until [[! -f $key ]]; then
+    until [[! -f $key ]]; do
         red "找不到文件！请检查输入路径！"
         read -p "请输入.key结尾的证书绝对路径：" key
     done
 else
-    echo "请输入证书内容："
-    read cert_txt
-    rm -f /root/Xray/$domain.crt
-    cat << EOF > /root/Xray/$domain.crt
-$cert_txt
-EOF
-    yellow "证书被保存在：" /root/Xray/$domain.crt
+    echo "请输入证书内容(输入空行结束)："
+    while read line; do
+    if [[ "$line" == "" ]]; then
+        break
+    fi
+    cert_txt="$cert_txt$line\n"
+    done
 
-    echo "请输入对应的key内容："
-    read key_txt
+    rm -f /root/Xray/$domain.crt
+    echo -e "$cert_txt" >  /root/Xray/$domain.crt
+#     cat << EOF > /root/Xray/$domain.crt
+# $cert_txt
+# EOF
+    yellow "证书被保存在：/root/Xray/$domain.crt"
+
+    echo "请输入对应的key内容(输入空行结束)："
+    while read line; do
+    if [[ "$line" == "" ]]; then
+        break
+    fi
+    key_txt="$key_txt$line\n"
+    done
     rm -f /root/Xray/$domain.key
-    cat << EOF > /root/Xray/$domain.key
-$key_txt
-EOF
-    yellow "证书被保存在：" /root/Xray/$domain.key
+    echo -e "$key_txt" >  /root/Xray/$domain.key
+#     cat << EOF > /root/Xray/$domain.key
+# $key_txt
+# EOF
+    yellow "证书被保存在：/root/Xray/$domain.key"
+    cert=/root/Xray/$domain.crt
+    key=/root/Xray/$domain.key
 fi
 green "证书配置完成！"
 
@@ -174,11 +191,11 @@ cat << EOF > /root/Xray/config.json
     {
         "listen": "0.0.0.0",
         "port": $in_port,
-        "protocol": "vmwss",
+        "protocol": "vmess",
         "settings": {
             "clients": [
                 {
-                    "id": "$UUID",
+                    "id": "$UUID"
                 }
             ],
             "disableInsecureEncryption": true
@@ -208,9 +225,9 @@ cat << EOF > /root/Xray/config.json
         },
         "wsSettings": {
             "acceptProxyProtocol": false,
-            "path": $path,
+            "path": "$path",
             "headers": {
-                "Host": $domain
+                "Host": "$domain"
             }
         },
         "tlsSettings": {
@@ -219,38 +236,38 @@ cat << EOF > /root/Xray/config.json
                 ""
             ],
             "certificates": [
-            {
-                "ocspStapling": 3600,
-                "certificateFile": $cert_txt,
-                "keyFile": $key_txt
-            }
+                {
+                    "ocspStapling": 3600,
+                    "certificateFile": "$cert",
+                    "keyFile": "$key"
+                }
             ],
             "cipherSuites": "",
             "fingerprint": "random",
             "maxVersion": "1.3",
             "minVersion": "1.0",
             "rejectUnknownSni": false,
-            "serverName": $domain
+            "serverName": "$domain"
         }
     }],
     "outbounds": [
-    {
-        "protocol": "freedom",
-        "tag": "direct"
-    },
-    {
-        "protocol": "blackhole",
-        "tag": "blocked"
-    }
+        {
+            "protocol": "freedom",
+            "tag": "direct"
+        },
+        {
+            "protocol": "blackhole",
+            "tag": "blocked"
+        }
     ],
     "policy": {
-    "handshake": 4,
-    "connIdle": 300,
-    "uplinkOnly": 2,
-    "downlinkOnly": 5,
-    "statsUserUplink": false,
-    "statsUserDownlink": false,
-    "bufferSize": 1024
+        "handshake": 4,
+        "connIdle": 300,
+        "uplinkOnly": 2,
+        "downlinkOnly": 5,
+        "statsUserUplink": false,
+        "statsUserDownlink": false,
+        "bufferSize": 1024
     }
 }
 EOF
@@ -258,7 +275,7 @@ EOF
 IP=$(wget -qO- --no-check-certificate -U Mozilla https://api.ip.sb/geoip | sed -n 's/.*"ip": *"\([^"]*\).*/\1/p')
 green "IP为：$IP"
 
-data="{
+data='{
   "v": "2",
   "ps": "nat",
   "add": "$domain",
@@ -274,11 +291,13 @@ data="{
   "sni": "",
   "alpn": "",
   "fp": "random"
-}"
+}'
 base=$(echo $data | base64)
 share_link="vmess://$base"
+rm -f /root/Xray/share-link.txt
 echo ${share_link} > /root/Xray/share-link.txt
 
+rm -f /root/Xray/clash.yaml
 cat << EOF > /root/Xray/clash.yaml
 port: 7890
 socks-port: 7891
