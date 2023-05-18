@@ -135,12 +135,12 @@ read -p "请选择：1.已上传证书文件，输入证书路径；2.未上传�
 [[ -z $is_path ]] && is_path=1
 if [[ $is_path == 1 ]]; then
     read -p "请输入.crt结尾的证书绝对路径：" cert
-    until [[! -f $cert ]]; do
+    until [[ -f "$cert" ]]; do
         red "找不到文件！请检查输入路径！"
         read -p "请输入.crt结尾的证书绝对路径：" cert
     done
     read -p "请输入.key结尾的证书绝对路径：" key
-    until [[! -f $key ]]; do
+    until [[ -f "$key" ]]; do
         red "找不到文件！请检查输入路径！"
         read -p "请输入.key结尾的证书绝对路径：" key
     done
@@ -153,12 +153,9 @@ else
     cert_txt="$cert_txt$line\n"
     done
 
-    rm -f /root/Xray/$domain.crt
-    echo -e "$cert_txt" >  /root/Xray/$domain.crt
-#     cat << EOF > /root/Xray/$domain.crt
-# $cert_txt
-# EOF
-    yellow "证书被保存在：/root/Xray/$domain.crt"
+    rm -f /root/Xray/domain.crt
+    echo -e "$cert_txt" >  /root/Xray/domain.crt
+    yellow "证书被保存在：/root/Xray/domain.crt"
 
     echo "请输入对应的key内容(输入空行结束)："
     while read line; do
@@ -167,14 +164,11 @@ else
     fi
     key_txt="$key_txt$line\n"
     done
-    rm -f /root/Xray/$domain.key
-    echo -e "$key_txt" >  /root/Xray/$domain.key
-#     cat << EOF > /root/Xray/$domain.key
-# $key_txt
-# EOF
-    yellow "证书被保存在：/root/Xray/$domain.key"
-    cert=/root/Xray/$domain.crt
-    key=/root/Xray/$domain.key
+    rm -f /root/Xray/domain.key
+    echo -e "$key_txt" >  /root/Xray/domain.key
+    yellow "证书被保存在：/root/Xray/domain.key"
+    cert=/root/Xray/domain.crt
+    key=/root/Xray/domain.key
 fi
 green "证书配置完成！"
 
@@ -221,33 +215,39 @@ cat << EOF > /root/Xray/config.json
                 "tcpMaxSeg": 1440,
                 "tcpUserTimeout": 10000,
                 "tcpcongestion": ""
-            }
-        },
-        "wsSettings": {
-            "acceptProxyProtocol": false,
-            "path": "$path",
-            "headers": {
-                "Host": "$domain"
-            }
-        },
-        "tlsSettings": {
-            "allowInsecure": false,
-            "alpn": [
-                ""
-            ],
-            "certificates": [
-                {
-                    "ocspStapling": 3600,
-                    "certificateFile": "$cert",
-                    "keyFile": "$key"
+            },
+            "wsSettings": {
+                "acceptProxyProtocol": false,
+                "path": "$path",
+                "headers": {
+                    "Host": "$domain"
                 }
-            ],
-            "cipherSuites": "",
-            "fingerprint": "random",
-            "maxVersion": "1.3",
-            "minVersion": "1.0",
-            "rejectUnknownSni": false,
-            "serverName": "$domain"
+            },
+            "tlsSettings": {
+                "allowInsecure": false,
+                "alpn": [
+                    ""
+                ],
+                "certificates": [
+                    {
+                        "ocspStapling": 3600,
+                        "certificateFile": "$cert",
+                        "keyFile": "$key",
+                        "certificate": [
+                            ""
+                        ],
+                        "key": [
+                            ""
+                        ]
+                    }
+                ],
+                "cipherSuites": "",
+                "fingerprint": "random",
+                "maxVersion": "1.3",
+                "minVersion": "1.0",
+                "rejectUnknownSni": false,
+                "serverName": "$domain"
+            }
         }
     }],
     "outbounds": [
@@ -278,15 +278,15 @@ green "IP为：$IP"
 data='{
   "v": "2",
   "ps": "nat",
-  "add": "$domain",
-  "port": "$in_port",
-  "id": "$UUID",
+  "add": "'$domain'",
+  "port": "'$in_port'",
+  "id": "'$UUID'",
   "aid": "0",
   "scy": "auto",
   "net": "ws",
   "type": "none",
-  "host": "$domain",
-  "path": "$path",
+  "host": "'$domain'",
+  "path": "'$path'",
   "tls": "tls",
   "sni": "",
   "alpn": "",
