@@ -351,7 +351,8 @@ yellow "Clash yaml配置文件已保存到：/root/Xray/clash.yaml"
 yellow "vmess+ws+tls的分享链接已保存到：/root/Xray/share-link.txt"
 echo
 green "vmess+ws+tls的分享链接为："
-red $share_link
+red "$share_link" | tr -d '\n'
+echo
 
 rm -f /etc/init.d/xray
 cat << EOF > /etc/init.d/xray
