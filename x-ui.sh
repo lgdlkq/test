@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -284,7 +284,8 @@ migrate_v2_ui() {
 
 install_bbr() {
     # temporary workaround for installing bbr
-    ash <(curl -L -s https://raw.githubusercontent.com/teddysun/across/master/bbr.sh)
+    wget https://raw.githubusercontent.com/teddysun/across/master/bbr.sh
+    ash bbr.sh
     echo ""
     before_show_menu
 }
