@@ -139,7 +139,7 @@ install_xui() {
         echo "开始下载替换的Xray文件..."
         xray_last_version=$(curl -s https://data.jsdelivr.com/v1/package/gh/XTLS/Xray-core | sed -n 4p | tr -d ',"' | awk '{$1=$1};1')
         yellow "xray最新版本号为： $xray_last_version"
-        wget https://github.com/XTLS/Xray-core/releases/download/$xray_last_version/Xray-linux-32.zip
+        wget https://github.com/XTLS/Xray-core/releases/download/v$xray_last_version/Xray-linux-32.zip
         mkdir temp
         unzip -d temp Xray-linux-32.zip
         rm Xray-linux-32.zip
