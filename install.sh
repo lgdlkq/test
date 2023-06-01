@@ -137,15 +137,16 @@ install_x-ui() {
 
     if [[ $(getconf LONG_BIT) != '64' ]]; then
         echo "开始下载替换的Xray文件..."
-            xray_last_version=$(curl -s https://data.jsdelivr.com/v1/package/gh/XTLS/Xray-core | sed -n 4p | tr -d ',"' | awk '{$1=$1};1')
-            yellow "xray最新版本号为： $xray_last_version"
-            wget https://github.com/XTLS/Xray-core/releases/download/$xray_last_version/Xray-linux-32.zip
-            mkdir temp
-            unzip -d temp Xray-linux-32.zip
-            rm Xray-linux-32.zip
-            mv temp/xray bin/xray-linux-amd64
-            rm -rf ./temp
-            chmod +x x-ui bin/xray-linux-amd64
+        xray_last_version=$(curl -s https://data.jsdelivr.com/v1/package/gh/XTLS/Xray-core | sed -n 4p | tr -d ',"' | awk '{$1=$1};1')
+        yellow "xray最新版本号为： $xray_last_version"
+        wget https://github.com/XTLS/Xray-core/releases/download/$xray_last_version/Xray-linux-32.zip
+        mkdir temp
+        unzip -d temp Xray-linux-32.zip
+        rm Xray-linux-32.zip
+        mv temp/xray bin/xray-linux-amd64
+        rm -rf ./temp
+        chmod +x x-ui bin/xray-linux-amd64
+        wget --no-check-certificate -O /usr/bin/x-ui https://raw.githubusercontent.com/lgdlkq/test/main/x-ui.sh?token=GHSAT0AAAAAACBBHNZ7BRSNIQXAOMVTQTQ6ZDYNYKQ
     else
         chmod +x x-ui bin/xray-linux-${arch}
         cp -f x-ui.service /etc/systemd/system/
