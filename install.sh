@@ -86,7 +86,7 @@ config_after_install() {
     fi
 }
 
-install_x-ui() {
+install_xui() {
     if [[ x"${release}" == x"alpine" ]]; then
         if rc-service x-ui status | grep -q "started"; then
             service x-ui stop
@@ -233,4 +233,4 @@ EOF
 
 echo -e "${green}开始安装${plain}"
 install_base
-install_x-ui $1
+install_xui $1
