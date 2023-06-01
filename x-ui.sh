@@ -21,7 +21,7 @@ function LOGI() {
 [[ $EUID -ne 0 ]] && LOGE "错误:  必须使用root用户运行此脚本!\n" && exit 1
 
 release=$(grep '^ID=' /etc/os-release | cut -d= -f2 | tr -d '"')
-green "检测到系统为：$release"
+echo "检测到系统为：$release"
 
 os_version=""
 
@@ -46,7 +46,7 @@ elif [[ x"${release}" == x"debian" ]]; then
         echo -e "${red}请使用 Debian 8 或更高版本的系统！${plain}\n" && exit 1
     fi
 fi
-green "系统版本: ${os_version}"
+echo "系统版本: ${os_version}"
 
 confirm() {
     if [[ $# > 1 ]]; then
