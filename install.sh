@@ -154,8 +154,8 @@ install_x-ui() {
     fi
 
     if [[ $release == "alpine" ]]; then
-    rm -f /etc/init.d/x-ui
-    cat << EOF > /etc/init.d/x-ui
+        rm -f /etc/init.d/x-ui
+        cat << EOF > /etc/init.d/x-ui
 #!/sbin/openrc-run
 name="x-ui"
 description="X-UI Service"
