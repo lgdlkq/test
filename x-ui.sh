@@ -79,7 +79,7 @@ before_show_menu() {
 }
 
 install() {
-    wget -O install.sh https://raw.githubusercontent.com/lgdlkq/test/main/install.sh?token=GHSAT0AAAAAACBBHNZ6IHLKBBZRKQ7G5JSKZDYNXKA
+    wget -O install.sh https://raw.githubusercontent.com/lgdlkq/test/main/install.sh
     ash install.sh
     if [[ $? == 0 ]]; then
         if [[ $# == 0 ]]; then
@@ -99,7 +99,7 @@ update() {
         fi
         return 0
     fi
-    wget -O install.sh https://raw.githubusercontent.com/lgdlkq/test/main/install.sh?token=GHSAT0AAAAAACBBHNZ6IHLKBBZRKQ7G5JSKZDYNXKA
+    wget -O install.sh https://raw.githubusercontent.com/lgdlkq/test/main/install.sh
     ash install.sh
     if [[ $? == 0 ]]; then
         LOGI "更新完成，已自动重启面板 "
@@ -291,7 +291,7 @@ install_bbr() {
 }
 
 update_shell() {
-    wget -O /usr/bin/x-ui --no-check-certificate https://raw.githubusercontent.com/lgdlkq/test/main/x-ui.sh?token=GHSAT0AAAAAACBBHNZ7BRSNIQXAOMVTQTQ6ZDYNYKQ
+    wget -O /usr/bin/x-ui --no-check-certificate https://raw.githubusercontent.com/lgdlkq/test/main/x-ui.sh
     if [[ $? != 0 ]]; then
         echo ""
         LOGE "下载脚本失败，请检查本机能否连接 Github"
