@@ -79,7 +79,8 @@ before_show_menu() {
 }
 
 install() {
-    ash <(curl -Ls https://raw.githubusercontent.com/lgdlkq/test/main/install.sh?token=GHSAT0AAAAAACBBHNZ6IHLKBBZRKQ7G5JSKZDYNXKA)
+    wget -O install.sh https://raw.githubusercontent.com/lgdlkq/test/main/install.sh?token=GHSAT0AAAAAACBBHNZ6IHLKBBZRKQ7G5JSKZDYNXKA
+    ash install.sh
     if [[ $? == 0 ]]; then
         if [[ $# == 0 ]]; then
             start
@@ -98,7 +99,8 @@ update() {
         fi
         return 0
     fi
-    ash <(curl -Ls https://raw.githubusercontent.com/lgdlkq/test/main/install.sh?token=GHSAT0AAAAAACBBHNZ6IHLKBBZRKQ7G5JSKZDYNXKA)
+    wget -O install.sh https://raw.githubusercontent.com/lgdlkq/test/main/install.sh?token=GHSAT0AAAAAACBBHNZ6IHLKBBZRKQ7G5JSKZDYNXKA
+    ash install.sh
     if [[ $? == 0 ]]; then
         LOGI "更新完成，已自动重启面板 "
         exit 0
