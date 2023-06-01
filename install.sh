@@ -12,7 +12,7 @@ cur_dir=$(pwd)
 
 # check os
 release=$(grep '^ID=' /etc/os-release | cut -d= -f2 | tr -d '"')
-green "检测到系统为：$release"
+echo "检测到系统为：$release"
 arch=$(arch)
 
 if [[ $arch == "x86_64" || $arch == "x64" || $arch == "amd64" ]]; then
@@ -28,7 +28,7 @@ else
     echo -e "${red}检测架构失败，将尝试使用默认架构: ${arch}${plain}"
 fi
 
-green "架构: ${arch}"
+echo "架构: ${arch}"
 
 os_version=""
 
@@ -53,7 +53,7 @@ elif [[ x"${release}" == x"debian" ]]; then
         echo -e "${red}请使用 Debian 8 或更高版本的系统！${plain}\n" && exit 1
     fi
 fi
-green "系统版本: ${os_version}"
+echo "系统版本: ${os_version}"
 
 install_base() {
     if [[ x"${release}" == x"centos" ]]; then
