@@ -79,7 +79,7 @@ before_show_menu() {
 }
 
 install() {
-    bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
+    ash <(curl -Ls https://raw.githubusercontent.com/lgdlkq/test/main/install.sh?token=GHSAT0AAAAAACBBHNZ6IHLKBBZRKQ7G5JSKZDYNXKA)
     if [[ $? == 0 ]]; then
         if [[ $# == 0 ]]; then
             start
@@ -98,7 +98,7 @@ update() {
         fi
         return 0
     fi
-    bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
+    ash <(curl -Ls https://raw.githubusercontent.com/lgdlkq/test/main/install.sh?token=GHSAT0AAAAAACBBHNZ6IHLKBBZRKQ7G5JSKZDYNXKA)
     if [[ $? == 0 ]]; then
         LOGI "更新完成，已自动重启面板 "
         exit 0
@@ -268,7 +268,7 @@ disable() {
 }
 
 show_log() {
-    journalctl -u x-ui.service -e --no-pager -f
+    rc-service x-ui status -v
     if [[ $# == 0 ]]; then
         before_show_menu
     fi
@@ -282,13 +282,13 @@ migrate_v2_ui() {
 
 install_bbr() {
     # temporary workaround for installing bbr
-    bash <(curl -L -s https://raw.githubusercontent.com/teddysun/across/master/bbr.sh)
+    ash <(curl -L -s https://raw.githubusercontent.com/teddysun/across/master/bbr.sh)
     echo ""
     before_show_menu
 }
 
 update_shell() {
-    wget -O /usr/bin/x-ui -N --no-check-certificate https://github.com/vaxilu/x-ui/raw/master/x-ui.sh
+    wget -O /usr/bin/x-ui --no-check-certificate https://raw.githubusercontent.com/lgdlkq/test/main/x-ui.sh?token=GHSAT0AAAAAACBBHNZ7BRSNIQXAOMVTQTQ6ZDYNYKQ
     if [[ $? != 0 ]]; then
         echo ""
         LOGE "下载脚本失败，请检查本机能否连接 Github"
@@ -301,11 +301,11 @@ update_shell() {
 
 # 0: running, 1: not running, 2: not installed
 check_status() {
-    if [[ ! -f /etc/systemd/system/x-ui.service ]]; then
+    if [[ ! -f /etc/init.d/x-ui ]]; then
         return 2
     fi
-    temp=$(systemctl status x-ui | grep Active | awk '{print $3}' | cut -d "(" -f2 | cut -d ")" -f1)
-    if [[ x"${temp}" == x"running" ]]; then
+    temp=$(rc-service x-ui status)
+    if [[ x"${temp}" == x"* status: started" ]]; then
         return 0
     else
         return 1
@@ -313,8 +313,8 @@ check_status() {
 }
 
 check_enabled() {
-    temp=$(systemctl is-enabled x-ui)
-    if [[ x"${temp}" == x"enabled" ]]; then
+    temp=$(rc-update show | grep networking | awk '{print $3}')
+    if [[ x"${temp}" == x"default" ]]; then
         return 0
     else
         return 1
